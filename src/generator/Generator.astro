@@ -1,0 +1,222 @@
+---
+// De generator: de editor van Colair in de browser, met Begin vanuit (Afbeelding, Kleur) en de vensters Kleur,
+// Harmonie, Exporteer en Uit afbeelding. Ontwerp: design/website.figcraft (colair-website). Gedrag: generator.ts,
+// stijl: generator.css, iconen: Icons.astro (zet die één keer in de pagina). Gaat 1-op-1 mee naar de repo
+// colair-generator; de site (Maak.astro) voegt via de slots Inspiratie, de voet en de App Store-kaart toe.
+//   text    de teksten (content/maak/<taal>.yaml op de site, src/text/<taal>.json in colair-generator)
+//   eerste  de tab die openstaat in Begin vanuit: 'foto', of 'kunst' als de site Inspiratie ervoor zet
+//   voorbeelden  foto's om Uit afbeelding mee te proberen, onder het sleepvlak (geen: dan staat er geen rij)
+// Slots: tab en paneel (Begin vanuit, vóór Afbeelding), werk (onder de panelen), na (in main, onder de editor), voet, exporteer (onder in Exporteer).
+import '../styles/colair.css';
+import './generator.css';
+import { jsonScript } from './html';
+import { HARMONIES, harmonyIcon, type Harmony } from '../kit/harmony';
+import { isLight } from '../kit/color';
+import { FORMATS, EXTENSION } from '../kit/swatchFiles';
+
+type Teksten = Record<string, string>;
+/** De teksten van de generator, per groep (zie src/text/en.json in colair-generator). */
+export interface GeneratorText {
+  palet: Teksten; begin: Teksten; vanuitKleur: Teksten; kleur: Teksten; exporteer: Teksten; bestand: Teksten; uitAfbeelding: Teksten;
+  kop: Teksten; harmonieen: Record<Harmony, { naam: string; uitleg: string }>; [groep: string]: unknown;
+}
+/** Een voorbeeldfoto onder het sleepvlak: het pad in public/, de naam (alt en de naam van het palet) en de maat. */
+export interface Voorbeeld { src: string; naam: string; breed: number; hoog: number }
+interface Props { text: GeneratorText; eerste?: string; voorbeelden?: Voorbeeld[] }
+const { text: m, eerste = 'foto', voorbeelden = [] } = Astro.props;
+const START = ['#2A3F8C', '#6E8FC9', '#E9C24A', '#F3DE97', '#E07A2E'];
+---
+<!-- Telefoon: zoals Palet in de iOS-app (design/website.figcraft, Generator · telefoon vanuit de app). De sitebalk wijkt
+     voor de pil met menu en logo links (Kop.astro) en de werkbalk rechts. De + gaat naar Begin vanuit, onder het palet. -->
+<div class="appbar">
+  <div class="glas werkbalk">
+    <button data-act="begin" aria-controls="begin" aria-label={m.begin.label}><svg class="ico"><use href="#i-add-square"/></svg></button>
+    <button data-act="harmonies" aria-haspopup="dialog" aria-label={m.palet.harmonie}><svg class="ico" id="harmonyIconApp"><use href="#i-harmony-analogous"/></svg></button>
+    <button data-act="export" aria-label={m.palet.exporteer}><svg class="ico"><use href="#i-export"/></svg></button>
+  </div>
+</div>
+
+<main>
+  <!-- Breed staan de editor en Begin vanuit naast elkaar (generator.css: .duo); smal onder elkaar. -->
+  <div class="wrap duo">
+  <section id="editor">
+    <div class="editor">
+      <div class="ed-head">
+        <div class="ed-intro">
+          <h1><span class="t-breed">{m.kop.titel}</span><span class="t-smal">{m.palet.titel}</span></h1>
+        </div>
+        <!-- Breed: de harmonie bovenin, naast de titel; het menu opent eronder (ontwerp: Generator · Genereer rechtsonder, B). -->
+        <button class="harmony-btn" data-act="harmonies" aria-haspopup="dialog"><svg class="ico" id="harmonyIcon"><use href="#i-harmony-analogous"/></svg><b id="harmonyName">{m.harmonieen.analogous.naam}</b><svg class="ico small"><use href="#i-chevron-down"/></svg></button>
+        <div class="tools">
+          <button class="round" data-act="undo" aria-label={m.palet.vorige} title={`${m.palet.vorige} (⌘Z)`}><svg class="ico"><use href="#i-undo"/></svg></button>
+          <button class="round" data-act="export" aria-label={m.palet.exporteer} title={m.palet.exporteer}><svg class="ico"><use href="#i-export"/></svg></button>
+        </div>
+      </div>
+
+      <div class="ed-body">
+        <div class="ed-main">
+          <!-- De kleuren: eerst het startpalet van de site, het script maakt er meteen een eigen palet van. -->
+          <ol class="bands" id="bands" aria-label={m.palet.titel}>
+            {START.map((hex, i) => <li style={`--c: ${hex}; --on: ${isLight(hex) ? 'rgba(20,20,20,.7)' : 'rgba(255,255,255,.75)'}`}><span class="swatch"><code>{hex}</code></span></li>)}
+          </ol>
+          <!-- Telefoon: het aantal kleuren met − en +, zoals de teller in de app en op desktop. -->
+          <!-- Telefoon: daarnaast de temperatuur, − koeler en + warmer, zoals de app (S-112, V4). -->
+          <div class="stappers-smal">
+            <div class="aantal-smal stepper-ctl" role="group" aria-label={m.palet.aantal}><button data-act="fewer" aria-label="–">–</button><output data-amount>5</output><button data-act="more" aria-label="+">+</button></div>
+            <div class="aantal-smal stepper-ctl" role="group" aria-label={m.palet.temperatuur}><button data-act="cooler" aria-label={m.palet.koeler} title={m.palet.koeler}>–</button><svg class="ico" aria-hidden="true"><use href="#i-temperature"/></svg><button data-act="warmer" aria-label={m.palet.warmer} title={m.palet.warmer}>+</button></div>
+          </div>
+          <!-- Breed: onder de stroken links Aantal kleuren, rechts Genereer als laatste stap. -->
+          <div class="ed-voet">
+            <div class="amount">
+              <span>{m.palet.aantal}</span>
+              <div class="stepper-ctl"><button data-act="fewer" aria-label="–">–</button><output id="amount" data-amount>5</output><button data-act="more" aria-label="+">+</button></div>
+              <!-- Temperatuur naast Aantal kleuren, zoals de app op de Mac (S-112, V4). -->
+              <span class="na">{m.palet.temperatuur}</span>
+              <div class="stepper-ctl" role="group" aria-label={m.palet.temperatuur}><button data-act="cooler" aria-label={m.palet.koeler} title={m.palet.koeler}>–</button><svg class="ico" aria-hidden="true"><use href="#i-temperature"/></svg><button data-act="warmer" aria-label={m.palet.warmer} title={m.palet.warmer}>+</button></div>
+            </div>
+            <button class="pill" data-act="generate" aria-keyshortcuts="Space" title={`${m.palet.genereer} (${m.palet.spatie})`}><svg class="ico"><use href="#i-refresh"/></svg>{m.palet.genereer}<kbd class="toets" aria-hidden="true">{m.palet.spatie}</kbd></button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Telefoon: Vorige links en Genereer rechts onderin, zolang de editor in beeld is (zoals in de app). -->
+    <div class="fab-rij">
+      <button class="glas fab" data-act="undo" aria-label={m.palet.vorige}><svg class="ico"><use href="#i-undo"/></svg></button>
+      <button class="fab inkt" data-act="generate" aria-label={m.palet.genereer}><svg class="ico"><use href="#i-refresh"/></svg></button>
+    </div>
+  </section>
+
+  <!-- Begin vanuit (ontwerp: Begin vanuit · nieuw palet op één plek, 20 november 2026): de startpunten voor een nieuw
+       palet als tabs, zoals in de app. Breed naast de editor, smal eronder. De site zet Inspiratie ervoor (slot tab en
+       paneel, Maak.astro); zonder staat Afbeelding aan. -->
+  <section class="section kunst begin" id="begin" aria-labelledby="beginKop">
+    <h2 class="label" id="beginKop"><i style="--dot: #2A3F8C"></i>{m.begin.label}</h2>
+    <div class="seg begin-tabs" role="tablist" aria-labelledby="beginKop">
+      <slot name="tab" />
+      <button type="button" role="tab" id="tabFoto" aria-selected={eerste === 'foto' ? 'true' : 'false'} aria-controls="paneFoto" data-begin="foto" tabindex={eerste === 'foto' ? 0 : -1}>{m.begin.afbeelding}</button>
+      <button type="button" role="tab" id="tabKleur" aria-selected="false" aria-controls="paneKleur" data-begin="kleur" tabindex="-1">{m.begin.kleur}</button>
+    </div>
+    <slot name="paneel" />
+
+    <!-- Afbeelding: sleep of kies een foto, of probeer een voorbeeld; daarna het venster Uit afbeelding (#dlgFoto). -->
+    <div class="pane" id="paneFoto" role="tabpanel" aria-labelledby="tabFoto" hidden={eerste !== 'foto'}>
+      <div class="drop" id="drop">
+        <svg class="ico"><use href="#i-gallery"/></svg>
+        <b>{m.begin.sleep}</b>
+        <small>{m.begin.zoekt}</small>
+        <button class="pill" type="button" data-act="kies-foto">{m.begin.kies}</button>
+      </div>
+      {voorbeelden.length > 0 && <>
+        <p class="example-head"><small>{m.begin.voorbeelden}</small></p>
+        <div class="voorbeelden">
+          {voorbeelden.map((v) => <button type="button" data-voorbeeld={v.src} data-naam={v.naam}><img src={v.src} alt={v.naam} width={v.breed} height={v.hoog} loading="lazy" decoding="async"></button>)}
+        </div>
+      </>}
+    </div>
+
+    <!-- Kleur (Vanuit kleur, S-068): kies een startkleur, Colair maakt er een palet omheen. Maak palet zet het op het palet. -->
+    <div class="pane" id="paneKleur" role="tabpanel" aria-labelledby="tabKleur" hidden>
+      <div class="start-color" id="startColor"><small>{m.vanuitKleur.start}</small><code></code></div>
+      <canvas class="wheel" id="startWheel" width="560" height="560" role="img" aria-label="Kleurenwiel"></canvas>
+      <div class="example-head"><small>{m.vanuitKleur.voorbeeld}</small>
+        <span class="example-tools"><button class="round" type="button" id="startUndo" aria-label={m.palet.vorige} title={`${m.palet.vorige} (⌘Z)`} disabled><svg class="ico"><use href="#i-undo"/></svg></button><button class="round" type="button" id="startGenerate" aria-label={m.palet.genereer} title={m.palet.genereer}><svg class="ico"><use href="#i-refresh"/></svg></button></span>
+      </div>
+      <div class="example strip" id="example"></div>
+      <div class="card list">
+        <label class="row"><span>{m.palet.harmonie}</span><select id="startHarmony">{HARMONIES.map((h) => <option value={h}>{m.harmonieen[h].naam}</option>)}</select></label>
+        <div class="row"><span>{m.palet.aantal}</span><div class="stepper-ctl"><button type="button" data-step="-1" aria-label="–">–</button><output id="startCount">5</output><button type="button" data-step="1" aria-label="+">+</button></div></div>
+      </div>
+      <button class="pill maak-palet" type="button" id="startMake">{m.vanuitKleur.maak}</button>
+    </div>
+    <slot name="werk" />
+  </section>
+  </div>
+
+  <slot name="na" />
+</main>
+
+<slot name="voet" />
+
+<!-- Het kleurenwiel (S-012, S-013): Was en Nu, de tintring met de driehoek, en de kleur in Hex, RGB, HSL of CMYK. -->
+<dialog class="sheet" id="dlgKleur" aria-labelledby="kleurTitel">
+  <form method="dialog" class="sheet-head">
+    <button class="round" value="close" aria-label={m.kleur.sluit}><svg class="ico"><use href="#i-close"/></svg></button>
+    <h3 id="kleurTitel">Kleur</h3>
+    <button class="round" type="button" id="kleurLock" aria-pressed="false" aria-label={m.palet.zetVast}><svg class="ico"><use href="#i-lock-open"/></svg></button>
+  </form>
+  <!-- De naam van de kleur (S-113): links onder de kop, zoals de app; hij volgt het wiel. -->
+  <p class="kleur-naam" id="kleurNaam" aria-live="polite"></p>
+  <div class="wasnu"><button type="button" id="was"><span>{m.kleur.was}</span><code></code></button><span id="nu"><code></code><span>{m.kleur.nu}</span></span></div>
+  <canvas class="wheel" id="wheel" width="560" height="560" role="img" aria-label="Kleurenwiel"></canvas>
+  <div class="seg" role="tablist" id="notation">
+    {['hex', 'rgb', 'hsl', 'cmyk'].map((n, i) => <button role="tab" aria-selected={i === 0 ? 'true' : 'false'} data-notation={n}>{({ hex: 'Hex', rgb: 'RGB', hsl: 'HSL', cmyk: 'CMYK' } as any)[n]}</button>)}
+  </div>
+  <div class="fields" id="fields"></div>
+  <div class="sheet-actions">
+    <button class="pill quiet" type="button" id="kleurDelete">{m.kleur.verwijder}</button>
+    <button class="pill" type="button" id="kleurDone">{m.kleur.gereed}</button>
+  </div>
+  <p class="hint">{m.kleur.uitleg}</p>
+</dialog>
+
+<!-- iPhone: de harmonieën als lijst; op de computer staan ze naast het palet. -->
+<dialog class="sheet" id="dlgHarmonie" aria-label={m.palet.harmonie}>
+  <form method="dialog" class="sheet-head"><span></span><h3>{m.palet.harmonie}</h3><button class="round" aria-label={m.kleur.sluit}><svg class="ico"><use href="#i-close"/></svg></button></form>
+  <div class="harmonies card" role="radiogroup" data-list>
+    {HARMONIES.map((h) => (
+      <button role="radio" aria-checked={h === 'analogous' ? 'true' : 'false'} data-harmony={h}>
+        <svg class="ico"><use href={`#i-${harmonyIcon[h]}`}/></svg>
+        <span><b>{m.harmonieen[h].naam}</b><small>{m.harmonieen[h].uitleg}</small></span>
+        <svg class="ico check"><use href="#i-check"/></svg>
+      </button>
+    ))}
+  </div>
+</dialog>
+
+<!-- Exporteer: drie groepen met een kop, elke tik doet meteen iets. Afbeelding (PNG) met een voorbeeld van wat je krijgt,
+     de bestanden per app (S-076, zonder tweede blad), en kopiëren. Bewaren doe je in de app. -->
+<dialog class="sheet" id="dlgExport" aria-labelledby="exportTitel">
+  <form method="dialog" class="sheet-head"><span></span><h3 id="exportTitel">{m.exporteer.titel}</h3><button class="round" aria-label={m.kleur.sluit}><svg class="ico"><use href="#i-close"/></svg></button></form>
+  <label class="name-row card"><span>{m.exporteer.naam}</span><input id="exportName" type="text" placeholder={m.exporteer.naamStandaard} maxlength="60" autocomplete="off"></label>
+  <section class="export-groep" aria-labelledby="exportAfbeelding">
+    <h4 class="export-kop" id="exportAfbeelding">{m.exporteer.afbeelding}<code>PNG</code></h4>
+    <div class="export-tegels">
+      <button type="button" class="card" data-export="card" title={m.exporteer.kaartUitleg}><span class="export-voorbeeld kaart" aria-hidden="true"><span class="beeld"><i></i><i></i><span class="banden"></span></span></span><b>{m.exporteer.kaart}</b></button>
+      <button type="button" class="card" data-export="field" title={m.exporteer.kleurvlakUitleg}><span class="export-voorbeeld vlak" aria-hidden="true"><span class="beeld"><i></i><i></i><span class="banden"></span></span></span><b>{m.exporteer.kleurvlak}</b></button>
+    </div>
+  </section>
+  <section class="export-groep" aria-labelledby="exportBestand">
+    <h4 class="export-kop" id="exportBestand">{m.exporteer.bestand}</h4>
+    <div class="rows card export-bestanden">
+      {FORMATS.map((f) => (
+        <button type="button" data-format={f}><b>{(m.bestand as any)[f]}</b><code>.{EXTENSION[f]}</code><svg class="ico"><use href="#i-download"/></svg></button>
+      ))}
+    </div>
+  </section>
+  <section class="export-groep" aria-labelledby="exportKopieer">
+    <h4 class="export-kop" id="exportKopieer">{m.exporteer.kopieer}</h4>
+    <div class="export-knoppen">
+      <button type="button" class="card" data-export="hex"><svg class="ico"><use href="#i-copy"/></svg>{m.exporteer.hex}</button>
+      <button type="button" class="card" data-export="link"><svg class="ico"><use href="#i-link"/></svg>{m.exporteer.link}</button>
+    </div>
+  </section>
+  <slot name="exporteer" />
+</dialog>
+
+<!-- Uit afbeelding (S-037, S-038): de kleuren van een foto, met cirkels die je zelf kunt verslepen. -->
+<dialog class="sheet" id="dlgFoto" aria-labelledby="fotoTitel">
+  <form method="dialog" class="sheet-head"><button class="round" aria-label={m.kleur.sluit}><svg class="ico"><use href="#i-close"/></svg></button><h3 id="fotoTitel">{m.uitAfbeelding.titel}</h3><span></span></form>
+  <div class="photo" id="photo"><img alt="" id="photoImg"><div class="markers" id="markers"></div></div>
+  <div class="card list">
+    <div class="row"><span>{m.palet.aantal}</span><div class="stepper-ctl"><button type="button" data-step="-1" aria-label="–">–</button><output id="photoCount">5</output><button type="button" data-step="1" aria-label="+">+</button></div></div>
+    <div class="example strip" id="photoStrip"></div>
+  </div>
+  <p class="hint">{m.uitAfbeelding.uitleg}</p>
+  <div class="sheet-actions"><button class="pill quiet" type="button" id="photoOther">{m.uitAfbeelding.kies}</button><button class="pill" type="button" id="photoUse">{m.uitAfbeelding.gebruik}</button></div>
+</dialog>
+<input type="file" id="photoInput" accept="image/*" hidden>
+
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script id="maakTekst" type="application/json" set:html={jsonScript(m)} />

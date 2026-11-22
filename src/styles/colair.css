@@ -1,0 +1,147 @@
+/* Colair · weblaag
+   De identiteit komt uit de app (design/DESIGN-SYSTEM.md): papier en inkt, het palet is de enige kleur,
+   glas alleen voor bediening, de hoeken van Metrics.swift, de duren van Motion.swift, de Solar-iconen.
+   Dit bestand voegt alleen toe wat een app niet nodig heeft: een typeschaal voor grote koppen,
+   ruimte tussen secties, een raster van 12 kolommen, twee diepteniveaus en het apparaatkader.
+   Regels: geen vaste waarden in een pagina; alles hieronder komt uit een token. */
+
+:root {
+  /* Kleur: Tone.swift */
+  --paper: #F4F3EF;
+  --surface: #FFFFFF;
+  --ink: #141414;
+  --ink-2: rgba(20, 20, 20, .60);
+  --line: rgba(20, 20, 20, .08);
+  --glass: rgba(255, 255, 255, .72);
+  --glass-ink: rgba(20, 20, 20, .90);
+  --on-glass-ink: #F4F3EF;
+  --signal: #C8442F;
+  --device: #1D1D1F;
+  --device-rim: #3A3A3C;
+  --dark-panel: #1E1E20;            /* het voorbeeld van een app met een donkere interface (Procreate) */
+  --dark-slot: rgba(255, 255, 255, .08); /* een leeg vak daarop */
+
+  /* Lettertypen. SF op Apple-toestellen; Inter en Source Serif 4 als terugval (zelf hosten, zie ASSETS.md). */
+  --font-sans: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Inter", "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  --font-display: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Inter", "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  --font-serif: "New York", ui-serif, "Source Serif 4", "Iowan Old Style", Georgia, serif;
+  --font-mono: ui-monospace, "SF Mono", SFMono-Regular, "JetBrains Mono", Menlo, Consolas, monospace;
+
+  /* Typeschaal: vijf stappen. Display en Titel groeien met het scherm; de rest is vast, zoals Dynamic Type op 100 %. */
+  --fs-display: clamp(48px, 7.2vw, 104px);  /* de ene kop van de pagina */
+  --fs-title:   clamp(32px, 4.4vw, 64px);   /* sectiekop; 64 sinds de klikbare rondleiding (10 november 2026) */
+  --fs-head:    19px;                        /* tussenkop, inleiding, motto */
+  --fs-body:    17px;                        /* lopende tekst, knoppen, hexcodes op het palet */
+  --fs-small:   13px;                        /* label (hoofdletters), bijschrift, voet, hexcode in een lijst */
+  --lh-display: .96;  --ls-display: -.045em;
+  --lh-title:  1.04;  --ls-title:   -.03em;
+  --lh-head:   1.35;  --ls-head:    -.01em;
+  --lh-body:   1.5;   --ls-body:    -.01em;
+  --lh-small:  1.4;   --ls-label:   .06em;
+
+  /* Ruimte: Space.swift (4 pt) en daarboven de stappen voor het web */
+  --s-1: 4px;  --s-2: 8px;  --s-3: 12px; --s-4: 16px; --s-5: 20px; --s-6: 24px; --s-8: 32px;
+  --s-12: 48px; --s-16: 64px; --s-24: 96px; --s-32: 128px; --s-48: 192px;
+  --section: var(--s-32);
+  --gutter: var(--s-6);
+  --margin: var(--s-5);
+  --container: 1200px;
+  --cols: repeat(12, minmax(0, 1fr));
+
+  /* Hoeken: Radius in Metrics.swift. Niets daartussen. Binnenhoek = buitenhoek − inspringing. */
+  --r-xs: 10px; --r-sm: 14px; --r-md: 18px; --r-lg: 22px; --r-xl: 26px; --r-sheet: 38px; --r-pill: 999px;
+
+  /* Maten: Size in Metrics.swift */
+  --tap: 44px; --bar-button: 52px; --small-button: 36px; --icon: 24px;
+
+  /* Diepte: twee niveaus. Voorwerp (apparaat, exportkaart, venster) en zwevend glas (bediening). Kaarten krijgen geen schaduw. */
+  --shadow-object: 0 32px 64px -32px rgba(0, 0, 0, .45);
+  --shadow-float: 0 12px 32px -12px rgba(0, 0, 0, .35);
+  --blur: saturate(1.4) blur(24px);
+
+  /* Beweging: Motion.swift */
+  --m-quick: .15s ease-out;
+  --m-ui: .32s cubic-bezier(.2, .8, .2, 1);
+  --m-color: .35s ease-in-out;
+  --m-list: .36s cubic-bezier(.2, .8, .2, 1);
+}
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
+  --paper: #0D0D0E; --surface: #18181A; --ink: #F3F2EE; --ink-2: rgba(243, 242, 238, .60); --line: rgba(243, 242, 238, .12);
+  --glass: rgba(40, 40, 42, .72); --glass-ink: rgba(243, 242, 238, .92); --on-glass-ink: #141414; --signal: #E0624D;
+  --device: #2A2A2D; --device-rim: #4A4A4E; --dark-panel: #121214; color-scheme: dark; } }
+:root[data-theme="dark"] {
+  --paper: #0D0D0E; --surface: #18181A; --ink: #F3F2EE; --ink-2: rgba(243, 242, 238, .60); --line: rgba(243, 242, 238, .12);
+  --glass: rgba(40, 40, 42, .72); --glass-ink: rgba(243, 242, 238, .92); --on-glass-ink: #141414; --signal: #E0624D;
+  --device: #2A2A2D; --device-rim: #4A4A4E; --dark-panel: #121214; color-scheme: dark; }
+@media (max-width: 860px) { :root { --section: var(--s-24); --gutter: var(--s-4); } }
+
+/* Basis */
+*, *::before, *::after { box-sizing: border-box; }
+html { scroll-padding-top: var(--s-6); -webkit-text-size-adjust: 100%; }
+body { margin: 0; background: var(--paper); color: var(--ink); font: var(--fs-body)/var(--lh-body) var(--font-sans); letter-spacing: var(--ls-body); -webkit-font-smoothing: antialiased; }
+[hidden] { display: none !important; }
+img, svg { display: block; max-width: 100%; }
+a { color: inherit; }
+button { font: inherit; color: inherit; }
+p, h1, h2, h3, figure, ul, ol { margin: 0; }
+ul, ol { padding: 0; list-style: none; }
+h1, h2, h3 { font-family: var(--font-display); font-weight: 600; text-wrap: balance; }
+h3 { font-size: var(--fs-head); line-height: var(--lh-head); letter-spacing: var(--ls-head); }
+p { text-wrap: pretty; }
+:focus-visible { outline: 2px solid var(--ink); outline-offset: 3px; border-radius: var(--r-xs); }
+@media (prefers-reduced-motion: reduce) { *, *::before, *::after { transition-duration: .01s !important; animation-duration: .01s !important; } }
+
+/* Tekst */
+.t-display { font-size: var(--fs-display); line-height: var(--lh-display); letter-spacing: var(--ls-display); }
+.t-title { font-size: var(--fs-title); line-height: var(--lh-title); letter-spacing: var(--ls-title); }
+.t-head { font-size: var(--fs-head); line-height: var(--lh-head); letter-spacing: var(--ls-head); }
+.t-lead { font-size: var(--fs-head); line-height: var(--lh-head); color: var(--ink-2); max-width: 32em; }
+.t-small { font-size: var(--fs-small); line-height: var(--lh-small); color: var(--ink-2); }
+.t-mono { font-family: var(--font-mono); font-weight: 500; letter-spacing: .04em; }
+.label { display: inline-flex; align-items: center; gap: var(--s-2); font: 500 var(--fs-small)/var(--lh-small) var(--font-sans); letter-spacing: var(--ls-label); text-transform: uppercase; color: var(--ink-2); }
+.label i { width: 10px; height: 10px; border-radius: 50%; background: var(--dot, var(--ink)); transition: background-color var(--m-color); }
+.muted { color: var(--ink-2); }
+
+/* Lay-out: één container, één raster */
+.wrap { max-width: calc(var(--container) + 2 * var(--margin)); margin: 0 auto; padding-left: max(var(--margin), env(safe-area-inset-left, 0px)); padding-right: max(var(--margin), env(safe-area-inset-right, 0px)); }
+.grid { display: grid; grid-template-columns: var(--cols); column-gap: var(--gutter); }
+.section { padding-block: var(--section) 0; }
+.section-head { display: grid; gap: var(--s-3); max-width: 46rem; margin-bottom: var(--s-12); }
+
+/* Icoon */
+.ico { width: var(--icon); height: var(--icon); flex: none; }
+
+/* Apparaat: iPhone met Dynamic Island. Breedte via --w; alles schaalt mee. Hoeken concentrisch. */
+
+/* Venster op de Mac: een schermafbeelding als voorwerp */
+.window { display: block; border-radius: var(--r-sm); box-shadow: 0 0 0 1px var(--line), var(--shadow-object); }
+
+/* App Store-badge.
+   Hier hoort de officiële badge van Apple (ASSETS.md). Tot die er is: een neutrale plaatshouder in dezelfde maat,
+   zonder nagemaakt Apple-logo. Hoogte 48 px; elke badge krijgt een eigen campagnelink (data-ct). */
+.badge { display: inline-flex; align-items: center; height: 48px; flex: none; text-decoration: none; }
+.badge img { height: 100%; width: auto; }
+.badge.placeholder { padding: 0 var(--s-5); border-radius: var(--r-xs); background: var(--ink); color: var(--paper); flex-direction: column; justify-content: center; align-items: flex-start; line-height: 1.1; }
+.badge.placeholder small { font-size: 10px; letter-spacing: .02em; opacity: .8; }
+.badge.placeholder b { font: 600 var(--fs-head) var(--font-display); letter-spacing: -.01em; }
+.free { font-size: var(--fs-small); color: var(--ink-2); }
+.cta { display: flex; align-items: center; gap: var(--s-4); flex-wrap: wrap; }
+
+
+/* Knoppen */
+.pill { display: inline-flex; align-items: center; gap: var(--s-2); min-height: var(--tap); padding: 0 var(--s-5); border: 0; border-radius: var(--r-pill); background: var(--ink); color: var(--paper); font-weight: 600; text-decoration: none; cursor: pointer; white-space: nowrap; }
+.pill .ico { width: 20px; height: 20px; }
+.pill.small { min-height: var(--small-button); padding: 0 var(--s-4); font-size: var(--fs-small); }
+.link { all: unset; cursor: pointer; display: inline-flex; align-items: center; gap: var(--s-1); min-height: var(--tap); font-weight: 500; }
+.link:hover { text-decoration: underline; text-underline-offset: 3px; }
+.link:focus-visible { outline: 2px solid var(--ink); border-radius: var(--r-xs); }
+
+/* Glas: alleen bediening die boven de inhoud zweeft */
+.glass-round { width: var(--bar-button); height: var(--bar-button); border: 0; border-radius: 50%; display: grid; place-items: center; cursor: pointer; background: var(--glass); backdrop-filter: var(--blur); -webkit-backdrop-filter: var(--blur); box-shadow: inset 0 0 0 1px var(--line), var(--shadow-float); transition: transform var(--m-quick); }
+.glass-round:active { transform: scale(.96); }
+.glass-round.prominent { background: var(--glass-ink); color: var(--on-glass-ink); }
+.glass-round:disabled { opacity: .4; cursor: default; }
+.notice { display: flex; align-items: center; gap: var(--s-3); padding: var(--s-2) var(--s-2) var(--s-2) var(--s-5); border-radius: var(--r-pill); background: color-mix(in srgb, var(--surface) 95%, transparent); backdrop-filter: var(--blur); -webkit-backdrop-filter: var(--blur); box-shadow: inset 0 0 0 1px var(--line), var(--shadow-float); animation: rise var(--m-ui); }
+@keyframes rise { from { opacity: 0; transform: translateY(6px); } }
+
+kbd { font: 500 var(--fs-small) var(--font-mono); padding: 1px var(--s-2); border-radius: var(--r-xs); border: 1px solid var(--line); background: var(--surface); }

@@ -1,0 +1,16 @@
+/* The demo page around the generator (Page.astro). Only tokens from colair.css; the generator has its own styles. */
+.top { position: sticky; top: 0; z-index: 10; background: var(--paper); border-bottom: 1px solid var(--line); }
+.top-row { display: flex; align-items: center; gap: var(--s-4); min-height: 56px; }
+.brand { display: inline-flex; align-items: center; gap: var(--s-2); margin-right: auto; color: var(--ink); text-decoration: none; font-weight: 600; }
+.brand img { height: 22px; width: auto; display: block; }
+@media (prefers-color-scheme: dark) { .brand img { filter: invert(1); } }
+.langs { display: flex; gap: var(--s-1); }
+.langs a, .page-foot a { color: var(--ink-2); text-decoration: none; font-size: var(--fs-small); padding: var(--s-1) var(--s-2); border-radius: var(--r-pill); }
+.langs a[aria-current="page"] { color: var(--ink); background: var(--line); }
+.langs a:hover, .page-foot a:hover { color: var(--ink); }
+.source { display: grid; place-items: center; width: var(--bar-button); height: var(--bar-button); border-radius: 50%; color: var(--ink); }
+.source:hover { background: var(--line); }
+.page-foot { display: flex; flex-wrap: wrap; justify-content: space-between; gap: var(--s-3); padding-block: var(--s-6) var(--s-8); color: var(--ink-2); font-size: var(--fs-small); }
+.page-foot p a { padding: 0; text-decoration: underline; }
+.page-foot nav { display: flex; gap: var(--s-1); }
+.page-foot a[aria-current="page"] { color: var(--ink); }

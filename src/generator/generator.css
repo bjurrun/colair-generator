@@ -1,0 +1,327 @@
+/* De generator (Generator.astro). Ontwerp: design/website.figcraft (colair-website). Op de weblaag (colair.css): alleen tokens.
+   iPhone eerst; vanaf 861 px de opbouw van Palet in de Mac-app, vanaf 1100 px Begin vanuit ernaast (.duo).
+   Gaat 1-op-1 mee naar de repo colair-generator; wat alleen de site heeft (Inspiratie): src/styles/maak.css. */
+
+.maak-page main { padding-bottom: var(--s-8); }
+/* De editor staat altijd helemaal boven de vouw: de stroken delen de hoogte die overblijft (--n is het aantal kleuren,
+   --vast wat er verder in het scherm staat). 100dvh: de hoogte die er nu is, ook als Safari zijn balken inklapt; 100svh
+   (de kleinste, met alle balken van Safari) alleen als terugval voor een browser zonder dvh. */
+#editor { padding-top: var(--s-5); }
+.ed-intro h1 { font: 700 30px/1.1 var(--font-display); letter-spacing: -.02em; }
+.ed-intro p { margin-top: var(--s-1); font-size: 15px; line-height: 1.4; color: var(--ink-2); }
+.ico.small { width: 16px; height: 16px; opacity: .6; }
+.round { width: var(--bar-button); height: var(--bar-button); flex: none; display: grid; place-items: center; border-radius: 50%; border: 1px solid var(--line); background: var(--glass); color: var(--ink); cursor: pointer; backdrop-filter: var(--blur); -webkit-backdrop-filter: var(--blur); }
+.round:active, .pill:active { transform: scale(.96); }
+.round:disabled { opacity: .35; cursor: default; }
+.round[aria-pressed="true"] { background: var(--ink); color: var(--paper); }
+button:focus-visible, a:focus-visible, input:focus-visible, select:focus-visible { outline: 2px solid var(--ink); outline-offset: 2px; }
+
+/* De editor */
+.editor { position: relative; }
+.ed-head { margin-bottom: var(--s-4); }
+.tools { display: none; }
+/* --vast: wat er naast de stroken in het scherm staat (werkbalk, titel, +, Vorige en Genereer, tabbalk). */
+.bands { --vast: 354px; --gap: 10px; display: grid; gap: var(--gap); }
+.bands[style*="--n: 7"], .bands[style*="--n: 8"] { --gap: 6px; }
+.bands li { --c: #888888; --on: #FFFFFF; position: relative; }
+.swatch { position: relative; display: flex; align-items: center; width: 100%; height: clamp(30px, calc((100svh - var(--vast)) / var(--n, 5) - var(--gap)), 88px); height: clamp(30px, calc((100dvh - var(--vast) - env(safe-area-inset-bottom, 0px)) / var(--n, 5) - var(--gap)), 88px); padding: 0 var(--s-2) 0 var(--s-5); border: 0; border-radius: var(--r-lg); background: var(--c); color: var(--on); text-align: left; cursor: pointer; touch-action: none; user-select: none; -webkit-user-select: none; transition: background-color var(--m-quick), transform var(--m-quick), height var(--m-quick), border-radius var(--m-quick); }
+.swatch code { font: 500 13px var(--font-mono); letter-spacing: .02em; }
+/* De naam boven de hexcode (S-113, ontwerp: Generator · kleurnamen). Te laag voor twee regels: alleen de code. */
+.swatch { container-type: size; }
+.etiket { display: grid; min-width: 0; max-width: calc(100% - 3 * var(--tap)); }
+.naam { font: 600 var(--fs-body)/1.25 var(--font-sans); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.etiket .naam + code { opacity: .8; }
+@container (max-height: 43px) { .naam { display: none; } .etiket .naam + code { opacity: 1; } }
+/* Vegen (S-078): de geveegde kleur tilt op, de andere worden stroken met hun hexcode; de sloten wachten. */
+.bands.swiping .swatch { height: var(--strip); }
+.bands.swiping .lifted .swatch { height: var(--lift); align-items: flex-start; padding-top: var(--s-4); transform: scale(1.02); box-shadow: var(--shadow-float); z-index: 1; }
+.bands.swiping .lock { opacity: 0; pointer-events: none; }
+.scale { position: absolute; border-radius: 24px; box-shadow: inset 0 0 0 1px var(--wash); animation: scale-in var(--m-quick) both; pointer-events: none; }
+.scale.light { left: 20px; right: 20px; top: 50%; height: 48px; translate: 0 -50%; }
+.scale.sat { top: 20px; bottom: 20px; left: 50%; width: 48px; translate: -50% 0; }
+.scale i { position: absolute; width: 40px; height: 40px; border-radius: 50%; background: var(--c); border: 3px solid var(--on); box-shadow: var(--shadow-float); }
+.scale.light i { top: 4px; left: calc(4px + var(--v) * (100% - 48px)); }
+.scale.sat i { left: 4px; bottom: calc(4px + var(--v) * (100% - 48px)); }
+@keyframes scale-in { from { opacity: 0; } }
+.lock { position: absolute; right: var(--s-3); top: 50%; translate: 0 -50%; width: var(--tap); height: var(--tap); display: grid; place-items: center; border: 0; border-radius: 50%; background: none; color: var(--on); cursor: pointer; }
+.lock .ico { width: 20px; height: 20px; }
+.lock[aria-pressed="true"]::before { content: ""; position: absolute; width: 36px; height: 36px; border-radius: 50%; background: var(--wash); }
+.lock[aria-pressed="true"] .ico { position: relative; }
+.lock.shake { animation: shake .4s; }
+/* Omhoog en omlaag (S-099, optie A): bij hover of focus twee ronde knoppen links van het slot, op de waas van het vaste slot. Niet op aanraakschermen: daar sleep je. */
+.moves { position: absolute; right: calc(var(--s-3) + var(--tap)); top: 50%; translate: 0 -50%; display: none; }
+.move { width: var(--tap); height: var(--tap); display: grid; place-items: center; border: 0; padding: 0; background: none; color: var(--on); cursor: pointer; }
+.move::before { content: ""; position: absolute; width: 36px; height: 36px; border-radius: 50%; background: var(--wash); }
+button.move::before { position: static; grid-area: 1 / 1; }
+span.move::before { content: none; }
+.move .ico { grid-area: 1 / 1; width: 16px; height: 16px; }
+/* Onzichtbaar maar wel te focussen, zodat Tab ze vindt en de focus na een klik op het pijltje blijft. */
+/* Sneltoetsen in beeld (ontwerp: Generator · sneltoetsen in beeld, A, 21 november 2026): alleen met muis en toetsenbord. */
+.toets { display: none; }
+@media (hover: hover) and (pointer: fine) {
+  .toets { display: inline-grid; place-items: center; min-width: var(--s-6); height: var(--s-6); padding: 0 var(--s-2); border: 0; border-radius: var(--r-xs); font: 600 var(--fs-small) var(--font-sans); background: color-mix(in srgb, currentColor 16%, transparent); opacity: .85; }
+  .pill .toets { margin-left: var(--s-1); }
+  .moves .toets { align-self: center; margin-left: var(--s-1); color: var(--on); background: var(--wash); }
+}
+@media (hover: hover) { .moves { display: flex; opacity: 0; pointer-events: none; } .bands li:hover .moves, .bands li:focus-within .moves { opacity: 1; pointer-events: auto; } }
+.bands.swiping .moves { display: none; }
+@keyframes shake { 20%, 60% { translate: -4px -50%; } 40%, 80% { translate: 4px -50%; } }
+.bands li.new .swatch { animation: grow .35s var(--ease-io, ease); }
+@keyframes grow { from { transform: scaleY(.6); opacity: 0; } }
+
+.ed-voet { display: none; }
+.harmony-btn { display: none; align-items: center; gap: var(--s-2); min-height: var(--tap); padding: 0; border: 0; background: none; color: var(--ink); font: 600 17px var(--font-sans); cursor: pointer; }
+.hint { text-align: center; color: var(--ink-2); opacity: .85; font-size: var(--fs-small); line-height: 1.45; margin-top: var(--s-4); }
+
+/* iPhone: de balk zweeft onderaan zolang de editor in beeld is. */
+
+/* Inspiratie */
+.kunst { display: grid; gap: var(--s-3); }
+
+/* Begin vanuit: drie startpunten als gesegmenteerde keuze (.seg); Inspiratie houdt zijn eigen opbouw. */
+.begin > .label { margin: 0; }
+.begin-tabs button { min-height: 34px; }
+/* De focusring binnen de knop, zodat de rand van de keuze hem niet afsnijdt. */
+.begin-tabs button:focus-visible { outline-offset: -2px; }
+.pane[hidden] { display: none; }
+.drop { display: grid; justify-items: center; gap: var(--s-2); padding: var(--s-8) var(--s-5); border: 1px solid var(--line); border-radius: var(--r-lg); background: var(--paper); text-align: center; transition: border-color var(--m-quick), background-color var(--m-quick); }
+.drop .ico { width: 28px; height: 28px; color: var(--ink); }
+.drop b { font: 600 var(--fs-body) var(--font-sans); }
+.drop small { font-size: var(--fs-small); color: var(--ink-2); }
+.drop .pill { margin-top: var(--s-3); }
+.drop.over { border-color: var(--ink); background: var(--surface); }
+.pane .example-head { margin: var(--s-5) 0 var(--s-2); min-height: 36px; }
+.voorbeelden { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--s-3); }
+.voorbeelden button { padding: 0; border: 1px solid var(--line); border-radius: var(--r-md); overflow: hidden; background: var(--line); aspect-ratio: 4 / 3; cursor: pointer; }
+.voorbeelden button:hover { border-color: color-mix(in srgb, var(--ink) 25%, transparent); }
+.voorbeelden img { display: block; width: 100%; height: 100%; object-fit: cover; }
+.example-tools { display: flex; gap: var(--s-2); }
+.example-tools .round { width: 36px; height: 36px; }
+.example-tools .ico { width: 18px; height: 18px; }
+.maak-palet { width: 100%; justify-content: center; margin-top: var(--s-5); }
+
+/* Sheets: van onderen op de telefoon, als venster in het midden op de computer. */
+.sheet { width: 100%; max-width: 100%; max-height: calc(100dvh - var(--s-12)); margin: auto 0 0; padding: var(--s-2) var(--s-4) max(var(--s-6), env(safe-area-inset-bottom, 0px)); border: 0; border-radius: var(--r-sheet) var(--r-sheet) 0 0; background: var(--paper); color: var(--ink); overflow-y: auto; }
+.sheet::backdrop { background: rgba(0, 0, 0, .3); }
+.sheet[open] { animation: up .32s cubic-bezier(.2, .8, .2, 1); }
+@keyframes up { from { transform: translateY(40px); opacity: 0; } }
+.sheet::before { content: ""; display: block; width: 40px; height: 5px; margin: 0 auto var(--s-2); border-radius: 3px; background: var(--ink); opacity: .2; }
+.sheet-head { display: grid; grid-template-columns: var(--bar-button) 1fr var(--bar-button); align-items: center; gap: var(--s-3); margin-bottom: var(--s-4); }
+.sheet-head h3 { text-align: center; font: 600 17px var(--font-sans); }
+.sheet-head .round { width: var(--tap); height: var(--tap); }
+.kleur-naam { margin: calc(-1 * var(--s-2)) 0 var(--s-3); font: 600 var(--fs-head)/1.3 var(--font-sans); }
+.sheet-actions { display: grid; grid-template-columns: 1fr 1fr; gap: var(--s-3); margin-top: var(--s-5); }
+.sheet-actions.with-undo { grid-template-columns: auto 1fr 1fr; align-items: center; }
+.sheet-actions .round { width: 52px; height: 52px; }
+.sheet-actions.one { grid-template-columns: 1fr; }
+.sheet-actions .pill { justify-content: center; min-height: 52px; }
+.sheet .pill.quiet { margin: 0; }
+.card { border-radius: var(--r-lg); background: var(--surface); }
+
+.wasnu { display: grid; grid-template-columns: 1fr 1fr; height: 52px; overflow: hidden; border-radius: var(--r-sm); }
+.wasnu > * { display: flex; align-items: center; justify-content: space-between; gap: var(--s-2); padding: 0 var(--s-4); border: 0; font: 13px var(--font-sans); color: var(--on, #141414); }
+.wasnu button { cursor: pointer; background: var(--was, #888); --on: var(--was-on); }
+.wasnu #nu { background: var(--nu, #888); --on: var(--nu-on); }
+.wasnu code { font: 500 14px var(--font-mono); }
+.wheel { display: block; width: min(280px, 72vw); aspect-ratio: 1; margin: var(--s-5) auto; touch-action: none; cursor: crosshair; }
+.seg { display: grid; grid-auto-flow: column; grid-auto-columns: 1fr; padding: 3px; border-radius: var(--r-pill); background: var(--line); }
+.seg button { min-height: 30px; border: 0; border-radius: var(--r-pill); background: none; color: var(--ink-2); font: 500 14px var(--font-sans); cursor: pointer; }
+.seg button[aria-selected="true"] { background: var(--surface); color: var(--ink); font-weight: 600; }
+.fields { display: grid; grid-auto-flow: column; grid-auto-columns: 1fr; gap: var(--s-2); margin-top: var(--s-3); }
+.fields label { display: grid; gap: 2px; padding: var(--s-2) var(--s-3); border-radius: var(--r-sm); background: var(--surface); border: 1.5px solid transparent; }
+.fields label:focus-within { border-color: var(--ink); }
+.fields span { font-size: 12px; color: var(--ink-2); }
+.fields input { width: 100%; border: 0; padding: 0; background: none; color: var(--ink); font: 500 18px var(--font-sans); }
+.fields input:focus { outline: none; }
+.fields input.bad { color: var(--signal); }
+
+.harmonies { display: grid; }
+.harmonies button { display: grid; grid-template-columns: 24px 1fr 20px; align-items: center; gap: var(--s-3); padding: var(--s-3) var(--s-3); border: 0; border-radius: var(--r-sm); background: none; color: var(--ink); text-align: left; cursor: pointer; }
+.harmonies button:hover { background: color-mix(in srgb, var(--ink) 4%, transparent); }
+.harmonies button span { display: grid; gap: 2px; }
+.harmonies b { font-weight: 500; font-size: 15px; }
+.harmonies small { font-size: 12px; color: var(--ink-2); line-height: 1.3; }
+.harmonies .check { width: 20px; height: 20px; visibility: hidden; }
+.harmonies [aria-checked="true"] { background: color-mix(in srgb, var(--ink) 6%, transparent); }
+.harmonies [aria-checked="true"] b { font-weight: 600; }
+.harmonies [aria-checked="true"] .check { visibility: visible; }
+.harmonies.card { padding: var(--s-2); }
+
+.rows { display: grid; overflow: hidden; }
+.rows button { display: grid; grid-template-columns: 24px 1fr 18px; align-items: center; gap: var(--s-4); min-height: 64px; padding: 0 var(--s-4); border: 0; background: none; color: var(--ink); text-align: left; cursor: pointer; }
+.rows button + button { box-shadow: inset 40px 1px 0 -39px var(--surface), inset 0 1px 0 var(--line); }
+.rows button:hover { background: color-mix(in srgb, var(--ink) 4%, transparent); }
+.rows span { display: grid; gap: 2px; min-width: 0; }
+.rows b { font-weight: 500; }
+.rows small { font-size: 13px; color: var(--ink-2); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.rows .chev { width: 18px; height: 18px; opacity: .35; }
+/* Exporteer: de naam in één regel, dan drie groepen met een kop (afbeelding, bestand, kopieer). */
+.name-row { display: grid; grid-template-columns: auto 1fr; align-items: center; gap: var(--s-4); min-height: 52px; margin-bottom: var(--s-5); padding-left: var(--s-4); border-radius: var(--r-sm); }
+.name-row span { color: var(--ink-2); }
+.name-row input { min-width: 0; height: 52px; padding: 0 var(--s-4) 0 0; border: 0; background: none; color: var(--ink); font: 500 var(--fs-body) var(--font-sans); }
+.name-row input:focus { outline: none; }
+.name-row:focus-within { box-shadow: 0 0 0 2px var(--ink); }
+.export-groep + .export-groep { margin-top: var(--s-5); }
+.export-kop { display: flex; justify-content: space-between; align-items: baseline; margin: 0 0 var(--s-2); padding: 0 var(--s-1); font: 600 12px var(--font-sans); letter-spacing: .06em; text-transform: uppercase; color: var(--ink-2); }
+.export-kop code { font: 500 12px var(--font-mono); letter-spacing: 0; }
+.export-tegels, .export-knoppen { display: grid; grid-template-columns: 1fr 1fr; gap: var(--s-2); }
+.export-tegels button { display: grid; gap: var(--s-3); padding: var(--s-3) var(--s-3) var(--s-4); border: 0; color: var(--ink); text-align: left; font: 500 15px var(--font-sans); cursor: pointer; }
+.export-tegels button:hover, .export-knoppen button:hover { background: color-mix(in srgb, var(--ink) 4%, var(--surface)); }
+.export-tegels b { font-weight: 500; padding-left: var(--s-1); }
+/* Het voorbeeld: de PNG in het klein, staand 4:5 zoals picture() in maak.ts hem tekent. De PNG is altijd licht,
+   ook in donkere modus, dus hier vaste kleuren van het beeld: papier, wit vel, inkt. */
+.export-voorbeeld { --beeld-papier: #F4F3EF; --beeld-wit: #FFFFFF; --beeld-inkt: #141414;
+  display: grid; place-items: center; height: 104px; border-radius: var(--r-sm); background: var(--paper); }
+.export-voorbeeld .beeld { display: grid; grid-template-rows: auto auto 1fr; gap: 3px; width: 72px; height: 90px; overflow: hidden; border-radius: 4px; box-shadow: 0 0 0 1px var(--line); }
+.export-voorbeeld .beeld > i { display: block; height: 4px; width: 55%; border-radius: 2px; background: var(--beeld-inkt); opacity: .8; }
+.export-voorbeeld .beeld > i + i { width: 38%; height: 3px; opacity: .35; }
+.export-voorbeeld .banden { display: flex; flex-direction: column; min-height: 0; overflow: hidden; }
+.export-voorbeeld .banden i { flex: 1; }
+/* Kaart: een wit vel op papier met logo en naam, de banden afgerond eronder. Kleurvlak: een witte kop, de banden tot de rand. */
+.export-voorbeeld.kaart .beeld { padding: 9px 8px 8px; background: linear-gradient(var(--beeld-wit), var(--beeld-wit)) 4px 4px / calc(100% - 8px) calc(100% - 8px) no-repeat, var(--beeld-papier); }
+.export-voorbeeld.kaart .banden { margin-top: 3px; border-radius: 3px; }
+.export-voorbeeld.vlak .beeld { grid-template-rows: auto 1fr; padding: 6px 0 0; background: var(--beeld-wit); }
+.export-voorbeeld.vlak .beeld > i { margin-left: 6px; }
+.export-voorbeeld.vlak .beeld > i + i { display: none; }
+.export-voorbeeld.vlak .banden { margin-top: 3px; }
+.export-bestanden button { grid-template-columns: 1fr auto 18px; min-height: 52px; }
+.export-bestanden code { font: 500 12px var(--font-mono); color: var(--ink-2); }
+.export-bestanden .ico { width: 18px; height: 18px; opacity: .5; }
+.export-knoppen button { display: flex; justify-content: center; align-items: center; gap: var(--s-2); min-height: 52px; border: 0; border-radius: var(--r-pill); color: var(--ink); font: 500 var(--fs-body) var(--font-sans); cursor: pointer; }
+.export-knoppen .ico { width: 20px; height: 20px; }
+
+.start-color { display: flex; align-items: center; justify-content: space-between; height: 52px; padding: 0 var(--s-4); border-radius: var(--r-sm); background: var(--start, #888); color: var(--start-on, #fff); }
+.start-color small { font-size: 13px; }
+.start-color code { font: 500 14px var(--font-mono); }
+.example-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: var(--s-2); }
+.example-head small { font-size: 12px; letter-spacing: var(--ls-label); text-transform: uppercase; color: var(--ink-2); }
+.strip.example { display: flex; height: 56px; overflow: hidden; border-radius: var(--r-sm); }
+.strip.example i { flex: 1; position: relative; }
+.strip.example i.start::after { content: ""; position: absolute; inset: 4px; border: 2px solid #FFFFFF; border-radius: 10px; box-shadow: 0 0 0 1px rgba(0,0,0,.15); }
+.card.list { display: grid; margin-top: var(--s-4); padding: var(--s-2) var(--s-4); }
+.card.list .row { display: flex; align-items: center; justify-content: space-between; gap: var(--s-4); min-height: 52px; }
+.card.list .row + .row { border-top: 1px solid var(--line); }
+.card.list select { min-height: 36px; padding: 0 var(--s-3); border: 0; border-radius: var(--r-pill); background: var(--line); color: var(--ink); font: 500 15px var(--font-sans); }
+.card.list .strip { margin: var(--s-2) 0 var(--s-3); }
+.stepper-ctl { display: inline-flex; align-items: center; border-radius: var(--r-pill); background: var(--line); }
+.stepper-ctl button { width: 40px; height: 36px; border: 0; background: none; color: var(--ink); font: 500 18px var(--font-sans); cursor: pointer; }
+.stepper-ctl > .ico { width: 20px; height: 20px; margin: 0 var(--s-1); }
+.stepper-ctl button:disabled { opacity: .3; cursor: default; }
+.stepper-ctl output { min-width: 20px; text-align: center; font-weight: 600; }
+.photo { position: relative; overflow: hidden; border-radius: var(--r-lg); background: var(--line); }
+.photo img { display: block; width: 100%; max-height: 46dvh; object-fit: contain; }
+.markers { position: absolute; inset: 0; }
+.markers button { position: absolute; width: 34px; height: 34px; margin: -17px 0 0 -17px; border: 3px solid #FFFFFF; border-radius: 50%; background: var(--c); box-shadow: 0 2px 8px rgba(0,0,0,.35); cursor: grab; touch-action: none; }
+.markers button:active { cursor: grabbing; transform: scale(1.15); }
+
+.menu { position: fixed; margin: 0; inset: auto; padding: var(--s-2); border: 1px solid var(--line); border-radius: var(--r-md); background: var(--paper); color: var(--ink); box-shadow: var(--shadow-float); }
+.menu button { display: flex; align-items: center; gap: var(--s-3); width: 100%; min-height: 40px; padding: 0 var(--s-3); border: 0; border-radius: var(--r-xs); background: none; color: var(--ink); font: 15px var(--font-sans); text-align: left; cursor: pointer; }
+.menu button:hover { background: var(--line); }
+
+.toast { position: fixed; left: 50%; bottom: calc(100px + env(safe-area-inset-bottom, 0px)); z-index: 30; translate: -50% 12px; padding: var(--s-3) var(--s-5); border-radius: var(--r-pill); background: var(--ink); color: var(--paper); font: 500 15px var(--font-sans); opacity: 0; pointer-events: none; transition: opacity var(--m-quick), translate var(--m-quick); }
+.toast.on { opacity: 1; translate: -50% 0; }
+
+/* De computer: Palet zoals in de Mac-app, met de werkbalk rechtsboven. De harmonie is één knop in de kop, naast de
+   titel, die een menu eronder opent; onder de stroken Aantal kleuren en rechts Genereer (ontwerp: Generator · Genereer
+   rechtsonder, harmonie boven, variant B, 18 november 2026). */
+@media (min-width: 861px) {
+  #editor { padding-top: var(--s-6); }
+  .editor { padding: var(--s-6) var(--s-8); border-radius: var(--r-xl); background: var(--surface); border: 1px solid var(--line); }
+  /* De kop past altijd op één regel, in elke taal: de editor is een container (zie @container editor hieronder), en
+     een lange harmonie (Complementaria dividida) krijgt een beletselteken; het menu toont de hele naam. */
+  .editor { container: editor / inline-size; }
+  .ed-head { display: flex; flex-wrap: nowrap; align-items: center; justify-content: space-between; gap: var(--s-4) var(--s-5); margin-bottom: var(--s-5); }
+  .tools { margin-left: auto; }
+  .ed-intro h1 { font-size: 40px; letter-spacing: -.03em; }
+  .ed-intro p { font-size: 17px; }
+  .tools { display: flex; align-items: center; gap: var(--s-3); }
+  .tools .pill { min-height: 44px; }
+  .appbar, .fab-rij, .stappers-smal, .t-smal { display: none; }
+  .bands { --vast: 330px; --gap: 10px; }
+  .swatch { height: clamp(34px, calc((100svh - var(--vast)) / var(--n, 5) - var(--gap)), 76px); border-radius: var(--r-lg); }
+  /* Onder de stroken: Aantal kleuren links, Genereer rechts (ontwerp: Generator · Genereer rechtsonder, B, 18 november 2026). */
+  .ed-voet { display: flex; align-items: center; justify-content: space-between; gap: var(--s-4); margin-top: var(--s-5); }
+  .ed-voet .pill { min-height: 44px; }
+  /* De harmonie in de kop, naast de titel: even hoog als de werkbalk ernaast. */
+  .harmony-btn { display: inline-flex; flex: 0 1 auto; min-width: 0; min-height: var(--bar-button); margin-right: auto; padding: 0 var(--s-4) 0 var(--s-3); gap: var(--s-2); border: 1px solid var(--line); border-radius: var(--r-pill); background: var(--surface); font-size: var(--fs-body); }
+  .harmony-btn:hover { border-color: color-mix(in srgb, var(--ink) 25%, transparent); }
+  .harmony-btn .ico.small { margin-left: var(--s-2); }
+  .harmony-btn b { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .harmony-btn .ico, .tools, .ed-intro { flex-shrink: 0; }
+  .ed-voet .amount { display: flex; align-items: center; gap: var(--s-4); font-weight: 500; white-space: nowrap; }
+  .ed-voet .amount .na { margin-left: var(--s-4); }
+  /* Het harmoniemenu: een menu bij de knop, zonder kop (een keuze sluit het). */
+  #dlgHarmonie.pop { width: 360px; padding: var(--s-2); }
+  #dlgHarmonie.pop .sheet-head { display: none; }
+  /* Compact: de uitleg alleen bij de gekozen harmonie, zodat het menu boven de knop past. */
+  #dlgHarmonie.pop .harmonies button { padding: var(--s-2) var(--s-3); }
+  #dlgHarmonie.pop .harmonies small { display: none; }
+  #dlgHarmonie.pop .harmonies [aria-checked="true"] small { display: block; }
+  /* Onder de editor (861 tot 1100 px): de tabs, Afbeelding en Kleur even breed als ze naast de editor zouden zijn, niet over de hele breedte. */
+  .begin-tabs, .pane:not(.pane-kunst) { max-width: 420px; }
+  .sheet { width: min(420px, 100vw - 48px); margin: auto; border-radius: var(--r-xl); padding: var(--s-5); box-shadow: var(--shadow-object); }
+  .sheet::before { display: none; }
+  .sheet.pop { position: fixed; margin: 0; }
+  .sheet.pop::backdrop { background: transparent; }
+  .toast { bottom: var(--s-8); }
+}
+/* Breed genoeg voor twee kolommen: Inspiratie staat naast de editor, even hoog, en scrolt zelf. Zo blijft het palet in
+   beeld terwijl je een werk kiest. contain: size houdt de kolom uit de rijhoogte, zodat de editor die bepaalt. */
+@media (min-width: 1100px) {
+  .duo { display: grid; grid-template-columns: minmax(0, 1fr) 368px; gap: var(--s-8); align-items: stretch; padding-top: var(--s-6); }
+  .duo #editor { padding-top: 0; min-width: 0; }
+  /* Titel 32 zoals in het ontwerp, zodat hij op één regel naast de werkbalk past. */
+  .duo .ed-intro h1 { font-size: 28px; white-space: nowrap; }
+  .duo .kunst { contain: size; display: flex; flex-direction: column; gap: 0; padding: var(--s-6) 0 0; border-radius: var(--r-xl); background: var(--surface); border: 1px solid var(--line); overflow: hidden; }
+  .duo .kunst > .label { margin-inline: var(--s-6); }
+  .duo .begin-tabs { margin: var(--s-3) var(--s-6) 0; }
+  /* Afbeelding en Kleur vullen de kolom en scrollen zelf, zoals de werken. */
+  .duo .pane:not(.pane-kunst) { flex: 1; min-height: 0; overflow-y: auto; padding: var(--s-4) var(--s-6) var(--s-6); }
+  .duo #paneKleur .wheel { width: min(200px, 100%); margin-block: var(--s-3); }
+  .duo .pane .card { background: var(--paper); }
+  /* Maak palet blijft onderin de kolom in beeld, ook als Kleur moet scrollen. */
+  .duo #paneKleur { padding-bottom: 0; }
+  .duo #paneKleur .maak-palet { position: sticky; bottom: 0; margin-top: var(--s-4); box-shadow: 0 0 0 var(--s-4) var(--surface), 0 calc(-1 * var(--s-4)) 0 var(--s-4) var(--surface); margin-bottom: var(--s-4); }
+}
+/* Telefoon: zoals Palet in de iOS-app (design/website.figcraft, Generator · telefoon vanuit de app). De sitebalk wijkt
+   voor een glazen menuknop links en de werkbalk rechts; onderin Vorige en Genereer. Begin vanuit staat onder het palet
+   (ontwerp: Begin vanuit · nieuw palet op één plek, 20 november 2026); de + in de werkbalk gaat erheen. */
+@media (max-width: 860px) {
+  .maak-page .top { display: none; }
+  .t-breed { display: none; }
+  .glas { background: var(--glass); border: 1px solid var(--line); color: var(--ink); backdrop-filter: var(--blur); -webkit-backdrop-filter: var(--blur); box-shadow: var(--shadow-float); }
+  .appbar { position: fixed; z-index: 20; top: max(var(--s-3), env(safe-area-inset-top, 0px)); right: var(--s-3); display: flex; justify-content: flex-end; }
+  .werkbalk { display: flex; padding: 0 var(--s-1); border-radius: var(--r-pill); }
+  .werkbalk button { width: var(--tap); height: var(--tap); display: grid; place-items: center; border: 0; background: none; color: var(--ink); cursor: pointer; }
+  .appbar .ico { width: 22px; height: 22px; }
+  #editor { padding-top: calc(var(--tap) + var(--s-8) + var(--s-2)); }
+  .ed-intro h1 { font-size: 34px; letter-spacing: -.02em; }
+  .ed-head { margin-bottom: var(--s-3); }
+  /* De teller − n + onder de stroken, zoals in de app. */
+  .stappers-smal { display: flex; justify-content: center; gap: var(--s-3); margin-top: var(--s-3); }
+  .aantal-smal { display: flex; width: max-content; }
+  .aantal-smal button { width: 48px; height: 40px; font-size: 20px; }
+  .aantal-smal output { min-width: 28px; font-size: 17px; }
+  /* Vorige en Genereer: zweven onderin zolang de editor in beeld is. */
+  .fab-rij { position: sticky; z-index: 5; bottom: calc(env(safe-area-inset-bottom, 0px) + var(--s-6)); display: flex; justify-content: space-between; margin-top: var(--s-4); pointer-events: none; }
+  .fab { pointer-events: auto; width: 60px; height: 60px; display: grid; place-items: center; border-radius: 50%; cursor: pointer; }
+  .fab .ico { width: 24px; height: 24px; }
+  .fab:disabled { opacity: .5; cursor: default; }
+  .fab.inkt { border: 0; background: var(--ink); color: var(--paper); box-shadow: var(--shadow-float); }
+  .fab:active, .werkbalk button:active { transform: scale(.94); }
+
+  /* De melding boven Vorige en Genereer, op één regel. */
+  .toast { bottom: calc(env(safe-area-inset-bottom, 0px) + var(--s-6) + 60px + var(--s-4)); white-space: nowrap; }
+
+  /* Begin vanuit onder het palet, met dezelfde tabs; Inspiratie toont de stromingen als kaarten, een kaart zijn werken met Terug. */
+  /* Na de + staat het label net onder de zwevende werkbalk. */
+  #begin { padding-top: var(--s-12); scroll-margin-top: calc(var(--tap) + var(--s-4) - var(--s-12)); }
+}
+/* Een smalle kaart (naast Begin vanuit, of een smal venster): de titel wordt iets kleiner. Gemeten in NL, EN en ES (13 november 2026). */
+@container editor (max-width: 820px) {
+  .ed-intro h1 { font-size: 30px; }
+}
+@container editor (max-width: 720px) {
+  .ed-intro h1 { font-size: 28px; }
+}
+@media (prefers-reduced-motion: reduce) { .sheet[open], .bands li.new .swatch, .lock.shake, .scale { animation: none; } .swatch { transition: none; } }

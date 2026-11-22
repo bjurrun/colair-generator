@@ -1,0 +1,133 @@
+{
+  "meta": {
+    "titel": "Maak een palet · Colair",
+    "beschrijving": "Genereer een kleurpalet in je browser, net als in de app Colair. Kies een harmonie, stel bij, en neem het mee. Gratis, zonder account."
+  },
+  "kop": {
+    "label": "Probeer Colair",
+    "titel": "Palet"
+  },
+  "palet": {
+    "titel": "Palet",
+    "kleurToevoegen": "Kleur toevoegen",
+    "harmonie": "Harmonie",
+    "aantal": "Aantal kleuren",
+    "vorige": "Vorige",
+    "genereer": "Genereer",
+    "spatie": "spatie",
+    "temperatuur": "Temperatuur",
+    "koeler": "Koeler",
+    "warmer": "Warmer",
+    "exporteer": "Exporteer",
+    "kleur": "Kleur {n}",
+    "zetVast": "Zet vast",
+    "maakLos": "Maak los",
+    "omhoog": "Omhoog",
+    "omlaag": "Omlaag",
+    "hoger": "Zet deze kleur een plek hoger (⌥↑)",
+    "lager": "Zet deze kleur een plek lager (⌥↓)",
+    "vastgezet": "Deze kleur staat vast",
+    "teruggezet": "Teruggezet",
+    "vol": "Een palet heeft hoogstens 8 kleuren",
+    "minimaal": "Een palet heeft minstens 2 kleuren"
+  },
+  "kleur": {
+    "was": "Was",
+    "nu": "Nu",
+    "verwijder": "Verwijder",
+    "gereed": "Gereed",
+    "uitleg": "Een kleur die je zelf kiest, zet Colair vast: Genereer laat hem staan.",
+    "kopieer": "Kopieer",
+    "gekopieerd": "Gekopieerd",
+    "hex": "Hex",
+    "rood": "Rood",
+    "groen": "Groen",
+    "blauw": "Blauw",
+    "tint": "Tint",
+    "verzadiging": "Verzadiging",
+    "licht": "Licht",
+    "cyaan": "Cyaan",
+    "magenta": "Magenta",
+    "geel": "Geel",
+    "zwart": "Zwart",
+    "sluit": "Sluit"
+  },
+  "harmonieen": {
+    "analogous": {
+      "naam": "Analoog",
+      "uitleg": "Buren op het wiel: rustig en samenhangend."
+    },
+    "complementary": {
+      "naam": "Complementair",
+      "uitleg": "Tegenpolen op het wiel: maximaal contrast."
+    },
+    "splitComplementary": {
+      "naam": "Split-complementair",
+      "uitleg": "Een kleur plus de buren van zijn tegenpool."
+    },
+    "triad": {
+      "naam": "Triade",
+      "uitleg": "Drie kleuren op gelijke afstand: levendig."
+    },
+    "tetrad": {
+      "naam": "Tetrade",
+      "uitleg": "Twee paren tegenpolen: rijk en gevarieerd."
+    },
+    "square": {
+      "naam": "Vierkant",
+      "uitleg": "Vier kleuren op 90°: speels en vol."
+    },
+    "monochrome": {
+      "naam": "Monochroom",
+      "uitleg": "Eén tint in licht en donker."
+    },
+    "analogousAccent": {
+      "naam": "Analoog + accent",
+      "uitleg": "Rustige buren met één contrasterend accent."
+    }
+  },
+  "exporteer": {
+    "titel": "Exporteer palet",
+    "naam": "Naam",
+    "naamStandaard": "Palet",
+    "afbeelding": "Afbeelding",
+    "kaart": "Met naam en codes",
+    "kaartUitleg": "Afbeelding met naam, logo en hexcodes",
+    "kleurvlak": "Alleen de kleuren",
+    "kleurvlakUitleg": "Afbeelding met alleen de kleuren",
+    "bestand": "Bestand voor een tekenapp",
+    "kopieer": "Kopieer",
+    "hex": "Hexcodes",
+    "link": "Link",
+    "gekopieerd": "Gekopieerd",
+    "bewaard": "Bewaard",
+    "kleuren": "kleuren"
+  },
+  "bestand": {
+    "procreate": "Procreate",
+    "adobe": "Photoshop en Illustrator",
+    "colair": "Colair"
+  },
+  "begin": {
+    "label": "Begin vanuit",
+    "afbeelding": "Afbeelding",
+    "kleur": "Kleur",
+    "sleep": "Sleep een foto hierheen",
+    "zoekt": "Colair zoekt de kleuren die het beeld bepalen.",
+    "kies": "Kies een afbeelding…",
+    "voorbeelden": "Of begin met een voorbeeld"
+  },
+  "vanuitKleur": {
+    "start": "Startkleur",
+    "voorbeeld": "Voorbeeld",
+    "maak": "Maak palet"
+  },
+  "uitAfbeelding": {
+    "titel": "Uit afbeelding",
+    "kies": "Kies een foto",
+    "uitleg": "De kleuren worden gekozen op hoe vaak ze voorkomen en hoe verschillend ze zijn. Je foto blijft op je toestel.",
+    "gebruik": "Gebruik palet",
+    "bron": "Uit afbeelding"
+  },
+  "taal": "nl"
+}
