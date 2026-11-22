@@ -4,9 +4,21 @@
   "description": "The colour palette engine and web generator of the Colair app: harmonies, locking, warmer and cooler, colour names, palettes from a picture or a colour, and exports for Procreate and Adobe.",
   "license": "MIT",
   "type": "module",
-  "repository": { "type": "git", "url": "git+https://github.com/bjurrun/colair-generator.git" },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/bjurrun/colair-generator.git"
+  },
   "homepage": "https://colair.app/generator/",
-  "keywords": ["color", "colour", "palette", "generator", "harmony", "oklab", "procreate", "ase"],
+  "keywords": [
+    "color",
+    "colour",
+    "palette",
+    "generator",
+    "harmony",
+    "oklab",
+    "procreate",
+    "ase"
+  ],
   "exports": {
     "./engine": "./src/kit/index.ts",
     "./engine/*": "./src/kit/*.ts",
@@ -15,7 +27,12 @@
     "./generator": "./src/generator/generator.ts",
     "./text/*": "./src/text/*"
   },
-  "files": ["src", "public", "LICENSE", "NOTICE.md"],
+  "files": [
+    "src",
+    "public",
+    "LICENSE",
+    "NOTICE.md"
+  ],
   "scripts": {
     "dev": "astro dev",
     "build": "astro build",
@@ -23,10 +40,17 @@
     "check": "astro check",
     "test": "vitest run"
   },
-  "peerDependencies": { "astro": ">=5" },
-  "peerDependenciesMeta": { "astro": { "optional": true } },
+  "peerDependencies": {
+    "astro": ">=5"
+  },
+  "peerDependenciesMeta": {
+    "astro": {
+      "optional": true
+    }
+  },
   "devDependencies": {
     "@astrojs/check": "^0.9.12",
+    "@types/node": "^22.20.5",
     "astro": "^7.4.8",
     "typescript": "^5.9.3",
     "vitest": "^3.2.7"
