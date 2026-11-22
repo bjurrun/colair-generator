@@ -1,9 +1,27 @@
+<p align="center">
+  <a href="https://colair.app"><picture>
+    <source media="(prefers-color-scheme: dark)" srcset="docs/images/colair-logo-dark.svg">
+    <img src="public/assets/colair-logo.svg" alt="Colair" width="200">
+  </picture></a>
+</p>
+
 # Colair generator
 
 The colour palette engine of [Colair](https://colair.app), the palette app for painters on iPhone and Mac, together with the web generator that runs it in a browser. Try it at [colair.app/generator](https://colair.app/generator/).
 
 - **The engine** (`src/kit/`): plain TypeScript, no dependencies, no DOM except for reading pictures. It makes palettes in eight harmonies around colours you lock, gives every colour a name, makes a palette warmer or cooler, finds the colours that shape a photo, builds a palette around one colour, and reads and writes hex, RGB, HSL and CMYK, share links, and swatch files for Procreate and Adobe.
 - **The web generator** (`src/generator/`): the editor of the app in the browser, for desktop and phone. Generate with the space bar, lock with 1 to 8, swipe a colour for lightness and saturation, pick on a colour wheel, start from a picture or a colour, and export a PNG card, a swatch file, the hex codes or a link.
+
+<p align="center">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="docs/images/generator-wide-dark.png">
+    <img src="docs/images/generator-wide-light.png" alt="The generator on a desktop: five colour bands with their names and hex codes, the harmony Analogous, Generate, and Start from with Picture and Colour" width="640">
+  </picture>
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="docs/images/generator-phone-dark.png">
+    <img src="docs/images/generator-phone-light.png" alt="The generator on a phone, like Palette in the iOS app" width="160">
+  </picture>
+</p>
 
 The engine is a line-by-line translation of ColairKit, the Swift package inside the app. The same seed gives the same colours as the app; `tests/parity.test.ts` checks 480 palettes, colours, notations, picture palettes and files against outcomes of the Swift code.
 
