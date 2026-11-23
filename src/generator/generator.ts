@@ -13,6 +13,7 @@ import { fromSearch, toSearch } from '../kit/link';
 import { colorName } from '../kit/colorNames';
 import { shiftedPalette } from '../kit/colorTemperature';
 import { esc } from './html';
+import { tekstOp } from './opkleur';
 import { arrows, moved } from './reorder';
 
 // Meten (S-083): Genereer en elke export, met de taal (src/scripts/meten.ts).
@@ -27,7 +28,8 @@ const reduce = () => matchMedia('(prefers-reduced-motion: reduce)').matches;
 const fill = (s: string, n: number | string) => s.replace('{n}', String(n));
 const ink = (hex: string) => (isLight(hex) ? '#141414' : '#FFFFFF'); // de afbeeldingen (PictureInk.onColor)
 // Op de kleurstroken: Tone.onLightColor / onDarkColor en de waas achter het slot, zoals in de app.
-const onColor = (hex: string) => (isLight(hex) ? 'rgba(20,20,20,.7)' : 'rgba(255,255,255,.75)');
+// Op de kleurstroken: volle inkt of wit met minstens 4,5 : 1 (src/generator/opkleur.ts, S-086).
+const onColor = tekstOp;
 const wash = (hex: string) => (isLight(hex) ? 'rgba(0,0,0,.12)' : 'rgba(255,255,255,.18)');
 const ico = (name: string, cls = 'ico') => `<svg class="${cls}" aria-hidden="true"><use href="#i-${name}"/></svg>`;
 

@@ -121,9 +121,6 @@ p { text-wrap: pretty; }
    zonder nagemaakt Apple-logo. Hoogte 48 px; elke badge krijgt een eigen campagnelink (data-ct). */
 .badge { display: inline-flex; align-items: center; height: 48px; flex: none; text-decoration: none; }
 .badge img { height: 100%; width: auto; }
-.badge.placeholder { padding: 0 var(--s-5); border-radius: var(--r-xs); background: var(--ink); color: var(--paper); flex-direction: column; justify-content: center; align-items: flex-start; line-height: 1.1; }
-.badge.placeholder small { font-size: 10px; letter-spacing: .02em; opacity: .8; }
-.badge.placeholder b { font: 600 var(--fs-head) var(--font-display); letter-spacing: -.01em; }
 .free { font-size: var(--fs-small); color: var(--ink-2); }
 .cta { display: flex; align-items: center; gap: var(--s-4); flex-wrap: wrap; }
 
